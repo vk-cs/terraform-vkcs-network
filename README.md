@@ -1,12 +1,12 @@
+<!-- BEGIN_TF_DOCS -->
 ![Beta Status](https://img.shields.io/badge/Status-Beta-yellow)
 
 # VKCS Network Terraform module
-A Terraform module for creating `Network` in VKCS (VK Cloud Solutions).
+A Terraform module for creating `Network` in VKCS.
 
 ## Examples
 You can find examples in the [`examples`](./examples) directory.
 
-<!-- BEGIN_TF_DOCS -->
 ## Requirements
 
 | Name | Version |
@@ -28,10 +28,13 @@ You can find examples in the [`examples`](./examples) directory.
 
 | Name | Description | Type | Default | Required |
 |------|-------------|------|---------|:--------:|
-| <a name="input_router"></a> [router](#input\_router) | Configuration for the router | <pre>object({<br/>    admin_state_up      = optional(bool)<br/>    description         = optional(string)<br/>    external_network_id = optional(string)<br/>    name                = optional(string)<br/>    tags                = optional(set(string))<br/>    value_specs         = optional(map(string))<br/>    vendor_options = optional(object({<br/>      set_router_gateway_after_create = optional(bool)<br/>    }))<br/>  })</pre> | n/a | yes |
-| <a name="input_networks"></a> [networks](#input\_networks) | List of network configurations. | <pre>list(object({<br/>    admin_state_up        = optional(bool)<br/>    description           = optional(string)<br/>    name                  = optional(string)<br/>    port_security_enabled = optional(bool)<br/>    private_dns_domain    = optional(string)<br/>    tags                  = optional(set(string))<br/>    value_specs           = optional(map(string))<br/>    vkcs_services_access  = optional(bool)<br/><br/>    subnets = optional(list(object({<br/>      allocation_pool = optional(list(object({<br/>        start = string<br/>        end   = string<br/>      })))<br/>      cidr               = optional(string)<br/>      description        = optional(string)<br/>      dns_nameservers    = optional(list(string))<br/>      enable_dhcp        = optional(bool)<br/>      enable_private_dns = optional(bool)<br/>      gateway_ip         = optional(string)<br/>      name               = optional(string)<br/>      no_gateway         = optional(bool)<br/>      prefix_length      = optional(number)<br/>      subnetpool_id      = optional(string)<br/>      tags               = optional(set(string))<br/>      value_specs        = optional(map(string))<br/><br/>      routes = optional(list(object({<br/>        destination_cidr = string<br/>        next_hop         = string<br/>      })))<br/>    })))<br/>  }))</pre> | `[]` | no |
+| <a name="input_external_network_id"></a> [external\_network\_id](#input\_external\_network\_id) | The network UUID of an external gateway for the router. | `string` | `null` | no |
+| <a name="input_name"></a> [name](#input\_name) | Default name for module resources. Used when a resource does not define its own name. | `string` | `null` | no |
+| <a name="input_networks"></a> [networks](#input\_networks) | List of network configurations. <br/>See `vkcs_networking_network` arguments for `networks`.<br/>See `vkcs_networking_subnet` arguments for `subnets`. | <pre>list(object({<br/>    description           = optional(string)<br/>    name                  = optional(string)<br/>    port_security_enabled = optional(bool)<br/>    private_dns_domain    = optional(string)<br/>    tags                  = optional(set(string))<br/>    vkcs_services_access  = optional(bool)<br/><br/>    subnets = optional(list(object({<br/>      allocation_pool = optional(list(object({<br/>        start = string<br/>        end   = string<br/>      })))<br/>      cidr               = string<br/>      description        = optional(string)<br/>      dns_nameservers    = optional(list(string))<br/>      enable_dhcp        = optional(bool)<br/>      enable_private_dns = optional(bool)<br/>      gateway_ip         = optional(string)<br/>      name               = optional(string)<br/>      no_gateway         = optional(bool)<br/>      tags               = optional(set(string))<br/><br/>      routes = optional(list(object({<br/>        destination_cidr = string<br/>        next_hop         = string<br/>      })))<br/>    })))<br/>  }))</pre> | `[]` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region in which to obtain the Networking client. | `string` | `null` | no |
-| <a name="input_sdn"></a> [sdn](#input\_sdn) | SDN to use for this resource. Must be one of following: `neutron`, `sprut`. | `string` | `null` | no |
+| <a name="input_router_args"></a> [router\_args](#input\_router\_args) | Configuration for the router. <br/>See `vkcs_networking_router` arguments. | <pre>object({<br/>    description = optional(string)<br/>    name        = optional(string)<br/>    tags        = optional(set(string), [])<br/>  })</pre> | `null` | no |
+| <a name="input_sdn"></a> [sdn](#input\_sdn) | SDN to use for this resource. | `string` | `null` | no |
+| <a name="input_tags"></a> [tags](#input\_tags) | Default set of tags that are added to a resource's tags. | `set(string)` | `[]` | no |
 
 ## Outputs
 

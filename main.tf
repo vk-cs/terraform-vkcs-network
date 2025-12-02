@@ -1,33 +1,30 @@
 resource "vkcs_networking_router" "router" {
-  admin_state_up      = var.router.admin_state_up
-  description         = var.router.description
-  external_network_id = var.router.external_network_id
+  description         = try(var.router_args.description, null)
+  external_network_id = var.external_network_id
   region              = var.region
   sdn                 = var.sdn
-  name                = var.router.name
-  tags                = var.router.tags
-  value_specs         = var.router.value_specs
-
-  dynamic "vendor_options" {
-    for_each = var.router.vendor_options != null ? [var.router.vendor_options] : []
-    content {
-      set_router_gateway_after_create = vendor_options.value.set_router_gateway_after_create
-    }
-  }
+  name = (
+    var.router_args != null && var.router_args.name != null ? var.router_args.name :
+    var.name != null ? var.name :
+    null
+  )
+  tags = setunion(var.tags, try(var.router_args.tags, []))
 }
 
 resource "vkcs_networking_network" "networks" {
   for_each = { for idx, net in var.networks : idx => net }
 
-  admin_state_up        = each.value.admin_state_up
-  description           = each.value.description
-  name                  = each.value.name
+  description = each.value.description
+  name = (
+    try(each.value.name, null) != null ? each.value.name :
+    var.name != null ? var.name :
+    null
+  )
   port_security_enabled = each.value.port_security_enabled
   private_dns_domain    = each.value.private_dns_domain
   region                = var.region
   sdn                   = var.sdn
-  tags                  = each.value.tags
-  value_specs           = each.value.value_specs
+  tags                  = setunion(var.tags, coalesce(each.value.tags, []))
   vkcs_services_access  = each.value.vkcs_services_access
 }
 
@@ -50,21 +47,21 @@ resource "vkcs_networking_subnet" "subnets" {
   enable_dhcp        = each.value.subnet_config.enable_dhcp
   enable_private_dns = each.value.subnet_config.enable_private_dns
   gateway_ip         = each.value.subnet_config.gateway_ip
-  name               = each.value.subnet_config.name
-  no_gateway         = each.value.subnet_config.no_gateway
-  prefix_length      = each.value.subnet_config.prefix_length
-  region             = var.region
-  sdn                = var.sdn
-  subnetpool_id      = each.value.subnet_config.subnetpool_id
-  tags               = each.value.subnet_config.tags
-  value_specs        = each.value.subnet_config.value_specs
+  name = (
+    try(each.value.subnet_config.name, null) != null ? each.value.subnet_config.name :
+    var.name != null ? var.name :
+    null
+  )
+  no_gateway = each.value.subnet_config.no_gateway
+  region     = var.region
+  sdn        = var.sdn
+  tags       = setunion(var.tags, coalesce(each.value.subnet_config.tags, []))
 }
 
 resource "vkcs_networking_router_interface" "router_interfaces" {
   for_each = { for s in local.all_subnets : s.subnet_key => s }
 
   router_id = vkcs_networking_router.router.id
-  # port_id = 
   region    = var.region
   sdn       = var.sdn
   subnet_id = vkcs_networking_subnet.subnets[each.key].id

@@ -18,9 +18,10 @@ output "networks" {
       name = net.name
       subnets = [
         for subnet_key, subnet in vkcs_networking_subnet.subnets : {
-          id   = subnet.id
-          name = subnet.name
-          cidr = subnet.cidr
+          id         = subnet.id
+          name       = subnet.name
+          cidr       = subnet.cidr
+          gateway_ip = subnet.gateway_ip
         } if substr(subnet_key, 0, length(net_key)) == net_key
       ]
     }

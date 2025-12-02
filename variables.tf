@@ -6,34 +6,48 @@ variable "region" {
 
 variable "sdn" {
   type        = string
-  description = "SDN to use for this resource. Must be one of following: `neutron`, `sprut`."
+  description = "SDN to use for this resource."
   default     = null
 }
 
-variable "router" {
+variable "name" {
+  type        = string
+  description = "Default name for module resources. Used when a resource does not define its own name."
+  default     = null
+}
+
+variable "tags" {
+  type        = set(string)
+  description = "Default set of tags that are added to a resource's tags."
+  default     = []
+}
+
+variable "external_network_id" {
+  type        = string
+  description = "The network UUID of an external gateway for the router."
+  default     = null
+}
+
+variable "router_args" {
   type = object({
-    admin_state_up      = optional(bool)
-    description         = optional(string)
-    external_network_id = optional(string)
-    name                = optional(string)
-    tags                = optional(set(string))
-    value_specs         = optional(map(string))
-    vendor_options = optional(object({
-      set_router_gateway_after_create = optional(bool)
-    }))
+    description = optional(string)
+    name        = optional(string)
+    tags        = optional(set(string), [])
   })
-  description = "Configuration for the router"
+  description = <<-EOT
+  Configuration for the router. 
+  See `vkcs_networking_router` arguments.
+  EOT
+  default     = null
 }
 
 variable "networks" {
   type = list(object({
-    admin_state_up        = optional(bool)
     description           = optional(string)
     name                  = optional(string)
     port_security_enabled = optional(bool)
     private_dns_domain    = optional(string)
     tags                  = optional(set(string))
-    value_specs           = optional(map(string))
     vkcs_services_access  = optional(bool)
 
     subnets = optional(list(object({
@@ -41,7 +55,7 @@ variable "networks" {
         start = string
         end   = string
       })))
-      cidr               = optional(string)
+      cidr               = string
       description        = optional(string)
       dns_nameservers    = optional(list(string))
       enable_dhcp        = optional(bool)
@@ -49,10 +63,7 @@ variable "networks" {
       gateway_ip         = optional(string)
       name               = optional(string)
       no_gateway         = optional(bool)
-      prefix_length      = optional(number)
-      subnetpool_id      = optional(string)
       tags               = optional(set(string))
-      value_specs        = optional(map(string))
 
       routes = optional(list(object({
         destination_cidr = string
@@ -60,6 +71,11 @@ variable "networks" {
       })))
     })))
   }))
-  description = "List of network configurations."
-  default     = []
+  description = <<-EOT
+  List of network configurations. 
+  See `vkcs_networking_network` arguments for `networks`.
+  See `vkcs_networking_subnet` arguments for `subnets`.
+  EOT
+
+  default = []
 }
