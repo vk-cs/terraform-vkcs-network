@@ -1,6 +1,6 @@
 output "router_id" {
   value       = vkcs_networking_router.router.id
-  description = "ID of the router."
+  description = "Router ID."
 }
 
 output "external_ip" {
@@ -8,24 +8,27 @@ output "external_ip" {
     vkcs_networking_router.router.external_fixed_ips[0].ip_address,
     null
   )
-  description = "External gateway of the router."
+  description = "External IP of the router."
 }
 
 output "networks" {
   value = [
-    for net_key, net in vkcs_networking_network.networks : {
-      id   = net.id
-      name = net.name
+    for network_key, network in vkcs_networking_network.networks : {
+      id   = network.id
+      name = network.name
       subnets = [
-        for subnet_key, subnet in vkcs_networking_subnet.subnets : {
-          id         = subnet.id
-          name       = subnet.name
-          cidr       = subnet.cidr
-          gateway_ip = subnet.gateway_ip
-        } if substr(subnet_key, 0, length(net_key)) == net_key
+        for subnet in local.all_subnets : {
+          id         = vkcs_networking_subnet.subnets[subnet.subnet_key].id
+          name       = vkcs_networking_subnet.subnets[subnet.subnet_key].name
+          cidr       = vkcs_networking_subnet.subnets[subnet.subnet_key].cidr
+          gateway_ip = vkcs_networking_subnet.subnets[subnet.subnet_key].gateway_ip
+        } if subnet.network_key == network_key
       ]
     }
   ]
+  description = <<-EOT
+  List of networks info.
+  See `vkcs_networking_network` and `vkcs_networking_subnet` for keys meaning.
+  EOT
   depends_on  = [vkcs_networking_router_interface.router_interfaces]
-  description = "List of created networks with subnets."
 }
