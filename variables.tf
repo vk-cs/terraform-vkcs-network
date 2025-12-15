@@ -76,7 +76,9 @@ variable "networks" {
   }))
   description = <<-EOT
   List of network configurations.
+
   See `vkcs_networking_network` arguments for `networks`.
+  
   See `vkcs_networking_subnet` arguments for `subnets`.
   EOT
 
