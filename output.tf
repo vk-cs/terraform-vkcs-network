@@ -28,6 +28,7 @@ output "networks" {
   ]
   description = <<-EOT
   List of networks info.
+  
   See `vkcs_networking_network` and `vkcs_networking_subnet` for keys meaning.
   EOT
   depends_on  = [vkcs_networking_router_interface.router_interfaces]
