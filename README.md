@@ -24,6 +24,7 @@ It does not support:
 ```hcl
 module "network" {
   source = "vk-cs/network/vkcs"
+  version = "0.0.1"
 
   name = "simple-tf-example"
   # Specify network name instead if default sdn contains more than one external network
