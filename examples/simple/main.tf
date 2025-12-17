@@ -1,5 +1,5 @@
 module "network" {
-  source = "../../"
+  source = "vk-cs/network/vkcs"
 
   name = "simple-tf-example"
   # Specify network name instead if default sdn contains more than one external network

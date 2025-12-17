@@ -1,5 +1,5 @@
 module "network" {
-  source = "../../"
+  source = "vk-cs/network/vkcs"
 
   tags = ["tf-example"]
   name = "full-tf-example"
