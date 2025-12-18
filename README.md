@@ -23,8 +23,10 @@ It does not support:
 ### Simple network with Internet access
 ```hcl
 module "network" {
-  source = "vk-cs/network/vkcs"
-  version = "0.0.1"
+  source = "https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.2.zip//terraform-vkcs-network-0.0.2"
+  # Alternatively you may refer right to Hashicorp module repository if you have access to it
+  # source = "vk-cs/network/vkcs"
+  # version = "0.0.2"
 
   name = "simple-tf-example"
   # Specify network name instead if default sdn contains more than one external network
@@ -37,12 +39,19 @@ module "network" {
   }]
 }
 ```
+```hcl
+output "network" {
+  value = module.network
+}
+```
 
 ## Examples
-You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.1/examples).
+You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.2/examples).
 
 Running an example:
-- Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.1.
+- Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.2.
+  Or get [module archive](https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.2.zip) and unpack it.
+  Or just copy files above to a new folder.
 - [Install Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start). **Note**: You do not need `vkcs_provider.tf` to run module example.
 - [Init Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start#terraform_initialization) from the example folder.
 - [Run Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start#creating_resources_via_terraform) to create example resources.
