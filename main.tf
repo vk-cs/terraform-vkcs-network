@@ -12,14 +12,14 @@ resource "vkcs_networking_router" "router" {
 }
 
 resource "vkcs_networking_network" "networks" {
-  for_each = { for key, n in var.networks : key => n }
+  for_each = { for n in local.networks : n.network_key => n }
 
   region = var.region
   sdn    = var.sdn
   tags   = setunion(var.tags, coalesce(each.value.tags, []))
   name = join("", [
     coalesce(each.value.name, var.name),
-    "%{if !can(coalesce(each.value.name))}-${each.key}%{else}%{endif}"
+    "%{if !can(coalesce(each.value.name))}-${each.value.network_idx}%{else}%{endif}"
   ])
   description           = each.value.description
   private_dns_domain    = each.value.private_dns_domain
@@ -28,7 +28,7 @@ resource "vkcs_networking_network" "networks" {
 }
 
 resource "vkcs_networking_subnet" "subnets" {
-  for_each = { for s in local.all_subnets : s.subnet_key => s }
+  for_each = { for s in local.subnets : s.subnet_key => s }
 
   network_id = vkcs_networking_network.networks[each.value.network_key].id
   region     = var.region
@@ -36,18 +36,18 @@ resource "vkcs_networking_subnet" "subnets" {
   tags       = setunion(var.tags, coalesce(each.value.tags, []))
   name = join("", [
     coalesce(each.value.name, var.name),
-    "%{if !can(coalesce(each.value.name))}-${each.key}%{else}%{endif}"
+    "%{if !can(coalesce(each.value.name))}-${each.value.network_idx}-${each.value.subnet_idx}%{else}%{endif}"
   ])
-  description        = each.value.description
-  cidr               = each.value.cidr
-  dns_nameservers    = each.value.dns_nameservers
-  enable_dhcp        = each.value.enable_dhcp
+  description     = each.value.description
+  cidr            = each.value.cidr
+  dns_nameservers = each.value.dns_nameservers
+  enable_dhcp     = each.value.enable_dhcp
   enable_private_dns = (
     vkcs_networking_network.networks[each.value.network_key].sdn == "sprut" ?
     each.value.enable_private_dns :
     null
   )
-  gateway_ip         = each.value.gateway_ip
+  gateway_ip = each.value.gateway_ip
 
   dynamic "allocation_pool" {
     for_each = each.value.allocation_pool != null ? each.value.allocation_pool : []
@@ -60,7 +60,7 @@ resource "vkcs_networking_subnet" "subnets" {
 }
 
 resource "vkcs_networking_router_interface" "router_interfaces" {
-  for_each = { for s in local.all_subnets : s.subnet_key => s }
+  for_each = { for s in local.subnets : s.subnet_key => s }
 
   router_id = vkcs_networking_router.router.id
   subnet_id = vkcs_networking_subnet.subnets[each.key].id
@@ -69,7 +69,7 @@ resource "vkcs_networking_router_interface" "router_interfaces" {
 }
 
 resource "vkcs_networking_subnet_route" "subnet_routes" {
-  for_each = { for r in local.all_routes : r.route_key => r }
+  for_each = { for r in local.routes : r.route_key => r }
 
   subnet_id        = vkcs_networking_subnet.subnets[each.value.subnet_key].id
   region           = var.region

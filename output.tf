@@ -13,16 +13,16 @@ output "external_ip" {
 
 output "networks" {
   value = [
-    for network_key, network in vkcs_networking_network.networks : {
-      id   = network.id
-      name = network.name
+    for network in local.networks : {
+      id   = vkcs_networking_network.networks[network.network_key].id
+      name = vkcs_networking_network.networks[network.network_key].name
       subnets = [
-        for subnet in local.all_subnets : {
+        for subnet in local.subnets : {
           id         = vkcs_networking_subnet.subnets[subnet.subnet_key].id
           name       = vkcs_networking_subnet.subnets[subnet.subnet_key].name
           cidr       = vkcs_networking_subnet.subnets[subnet.subnet_key].cidr
           gateway_ip = vkcs_networking_subnet.subnets[subnet.subnet_key].gateway_ip
-        } if subnet.network_key == network_key
+        } if subnet.network_key == network.network_key
       ]
     }
   ]
