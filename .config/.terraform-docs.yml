@@ -53,15 +53,15 @@ content: |-
   {{ include "examples/simple/main.tf" }}
   ```
   ```hcl
-  {{ include "examples/simple/outputs.tf" }}
+  {{ include "examples/simple/output.tf" }}
   ```
 
   ## Examples
-  You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.2/examples).
+  You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.3/examples).
 
   Running an example:
-  - Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.2.
-    Or get [module archive](https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.2.zip) and unpack it.
+  - Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.3.
+    Or get [module archive](https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.3.zip) and unpack it.
     Or just copy files above to a new folder.
   - [Install Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start). **Note**: You do not need `vkcs_provider.tf` to run module example.
   - [Init Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start#terraform_initialization) from the example folder.

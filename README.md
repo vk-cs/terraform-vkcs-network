@@ -23,10 +23,10 @@ It does not support:
 ### Simple network with Internet access
 ```hcl
 module "network" {
-  source = "https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.2.zip//terraform-vkcs-network-0.0.2"
+  source = "https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.3.zip//terraform-vkcs-network-0.0.3"
   # Alternatively you may refer right to Hashicorp module repository if you have access to it
   # source = "vk-cs/network/vkcs"
-  # version = "0.0.2"
+  # version = "0.0.3"
 
   name = "simple-tf-example"
   # Specify network name instead if default sdn contains more than one external network
@@ -46,11 +46,11 @@ output "network" {
 ```
 
 ## Examples
-You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.2/examples).
+You can find examples in the [`examples`](./examples) directory on [GitHub](https://github.com/vk-cs/terraform-vkcs-network/tree/v0.0.3/examples).
 
 Running an example:
-- Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.2.
-  Or get [module archive](https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.2.zip) and unpack it.
+- Clone [GitHub repository](https://github.com/vk-cs/terraform-vkcs-network) and checkout tag v0.0.3.
+  Or get [module archive](https://github.com/vk-cs/terraform-vkcs-network/archive/refs/tags/v0.0.3.zip) and unpack it.
   Or just copy files above to a new folder.
 - [Install Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start). **Note**: You do not need `vkcs_provider.tf` to run module example.
 - [Init Terraform](https://cloud.vk.com/docs/en/tools-for-using-services/terraform/quick-start#terraform_initialization) from the example folder.
@@ -90,9 +90,15 @@ Type: `string`
 
 Description: List of network configurations.
 
-See `vkcs_networking_network` arguments for `networks`.  
+See `vkcs_networking_network` arguments for `networks`.
+`name` is inherited from the module name by default.
+`resource_key` default value is resulting `name` value. Must be defined if more than one network is specified.  
 
 See `vkcs_networking_subnet` arguments for `subnets`.
+`name` is inherited from the module name by default.
+`resource_key` default value is `cidr` or `name` value if specified.
+
+`resource_key` - an unique key within list to index TF resources. May be used to prevent resource recreation on changing of resource name or simplify access to resources in TF state.
 
 Type:
 
@@ -104,6 +110,7 @@ list(object({
     private_dns_domain    = optional(string)
     port_security_enabled = optional(bool)
     vkcs_services_access  = optional(bool)
+    resource_key          = optional(string)
 
     subnets = list(object({
       tags        = optional(set(string))
@@ -122,6 +129,7 @@ list(object({
         destination_cidr = string
         next_hop         = string
       })))
+      resource_key = optional(string)
     }))
   }))
 ```
